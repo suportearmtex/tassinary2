@@ -465,8 +465,8 @@ function Dashboard() {
   return (
     <div className="p-4 sm:p-6">
       {/* Calendar Section */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4 sm:p-6 border border-gray-100 dark:border-gray-700">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4 sm:p-6 border border-gray-100 dark:border-gray-700 transition-colors duration-200">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between mb-6 gap-4">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
             Calendário de Agendamentos
           </h2>
@@ -477,7 +477,7 @@ function Dashboard() {
                 type="time"
                 value={businessHours.start}
                 onChange={(e) => setBusinessHours({ ...businessHours, start: e.target.value })}
-                className="rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white px-[5px] py-[5px]"
+                className="rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white px-3 py-2 text-sm transition-colors duration-200"
               />
             </div>
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
@@ -486,26 +486,29 @@ function Dashboard() {
                 type="time"
                 value={businessHours.end}
                 onChange={(e) => setBusinessHours({ ...businessHours, end: e.target.value })}
-                className="rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white px-[5px] py-[5px]"
+                className="rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white px-3 py-2 text-sm transition-colors duration-200"
               />
             </div>
             <button
               onClick={() => setIsModalOpen(true)}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors flex items-center gap-2 whitespace-nowrap"
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors duration-200 flex items-center gap-2 whitespace-nowrap"
             >
               <Plus className="w-4 h-4" />
-              Novo Agendamento
+              <span className="hidden sm:inline">Novo Agendamento</span>
+              <span className="sm:hidden">Novo</span>
             </button>
           </div>
         </div>
-        <div className="h-[400px] sm:h-[600px]">
+        
+        {/* Calendar Container with responsive height */}
+        <div className="h-[300px] sm:h-[400px] lg:h-[600px] overflow-hidden">
           <FullCalendar
             plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-            initialView="timeGridWeek"
+            initialView={window.innerWidth < 768 ? 'dayGridMonth' : 'timeGridWeek'}
             headerToolbar={{
               left: 'prev,next today',
               center: 'title',
-              right: 'dayGridMonth,timeGridWeek,timeGridDay',
+              right: window.innerWidth < 768 ? 'dayGridMonth' : 'dayGridMonth,timeGridWeek,timeGridDay',
             }}
             events={events}
             slotMinTime={businessHours.start}
@@ -526,6 +529,9 @@ function Dashboard() {
               endTime: businessHours.end,
             }}
             height="100%"
+            aspectRatio={window.innerWidth < 768 ? 1.2 : 1.35}
+            eventDisplay="block"
+            dayMaxEventRows={window.innerWidth < 768 ? 2 : 6}
           />
         </div>
       </div>
@@ -533,7 +539,7 @@ function Dashboard() {
       {/* Appointment Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-4 sm:p-6 w-full max-w-md max-h-[90vh] overflow-y-auto transition-colors duration-200">
             <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
               {isEditMode ? 'Editar Agendamento' : 'Novo Agendamento'}
             </h3>
@@ -557,7 +563,7 @@ function Dashboard() {
                           }
                         }}
                         onFocus={() => setIsClientDropdownOpen(true)}
-                        className="w-full px-[5px] py-[5px] pl-10 pr-10 rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                        className="w-full px-3 py-2 pl-10 pr-10 rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-colors duration-200"
                       />
                       <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                       <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
@@ -596,7 +602,7 @@ function Dashboard() {
                     required
                     value={newAppointment.service_id}
                     onChange={(e) => handleServiceChange(e.target.value)}
-                    className="w-full px-[5px] py-[5px] rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    className="w-full px-3 py-2 rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-colors duration-200"
                   >
                     <option value="">Selecione um serviço</option>
                     {services?.map((service) => (
@@ -623,7 +629,7 @@ function Dashboard() {
                         price: e.target.value,
                       })
                     }
-                    className="w-full px-[5px] py-[5px] rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    className="w-full px-3 py-2 rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-colors duration-200"
                   />
                 </div>
                 
@@ -641,7 +647,7 @@ function Dashboard() {
                         date: e.target.value,
                       })
                     }
-                    className="w-full px-[5px] py-[5px] rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    className="w-full px-3 py-2 rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-colors duration-200"
                   />
                 </div>
                 
@@ -660,10 +666,10 @@ function Dashboard() {
                           time: e.target.value,
                         })
                       }
-                      className="w-full sm:flex-1 px-[5px] py-[5px] rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                      className="w-full sm:flex-1 px-3 py-2 rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-colors duration-200"
                     />
                     {newAppointment.service_id && newAppointment.time && (
-                      <div className="px-[5px] py-[5px] bg-gray-100 dark:bg-gray-700 rounded-md text-gray-500 dark:text-gray-400 text-sm whitespace-nowrap">
+                      <div className="px-3 py-2 bg-gray-100 dark:bg-gray-700 rounded-md text-gray-500 dark:text-gray-400 text-sm whitespace-nowrap">
                         até {format(
                           addMinutes(
                             parseISO(`${newAppointment.date}T${newAppointment.time}`),
@@ -687,14 +693,14 @@ function Dashboard() {
                     setClientFilter('');
                     setIsClientDropdownOpen(false);
                   }}
-                  className="w-full sm:w-auto px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+                  className="w-full sm:w-auto px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
                   disabled={createAppointmentMutation.isPending || updateAppointmentMutation.isPending || !newAppointment.client_id}
-                  className="w-full sm:w-auto px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  className="w-full sm:w-auto px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 transition-colors duration-200"
                 >
                   {(createAppointmentMutation.isPending || updateAppointmentMutation.isPending) && (
                     <Loader2 className="w-4 h-4 animate-spin" />
@@ -710,7 +716,7 @@ function Dashboard() {
       {/* Delete Confirmation Modal */}
       {isDeleteModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-sm">
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-sm transition-colors duration-200">
             <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
               Confirmar Exclusão
             </h3>
@@ -723,14 +729,14 @@ function Dashboard() {
                   setIsDeleteModalOpen(false);
                   setAppointmentToDelete(null);
                 }}
-                className="w-full sm:w-auto px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+                className="w-full sm:w-auto px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200"
               >
                 Cancelar
               </button>
               <button
                 onClick={confirmDelete}
                 disabled={deleteAppointmentMutation.isPending}
-                className="w-full sm:w-auto px-4 py-2 bg-red-600 text-white rounded-md text-sm font-medium hover:bg-red-700 disabled:opacity-50 flex items-center justify-center gap-2"
+                className="w-full sm:w-auto px-4 py-2 bg-red-600 text-white rounded-md text-sm font-medium hover:bg-red-700 disabled:opacity-50 flex items-center justify-center gap-2 transition-colors duration-200"
               >
                 {deleteAppointmentMutation.isPending && (
                   <Loader2 className="w-4 h-4 animate-spin" />
@@ -743,30 +749,114 @@ function Dashboard() {
       )}
 
       <style>{`
-        .status-pending { background-color: #FEF3C7; border-color: #F59E0B; }
-        .status-confirmed { background-color: #D1FAE5; border-color: #10B981; }
-        .status-cancelled { background-color: #FEE2E2; border-color: #EF4444; }
+        .status-pending { 
+          background-color: #FEF3C7 !important; 
+          border-color: #F59E0B !important; 
+          color: #92400E !important;
+        }
+        .status-confirmed { 
+          background-color: #D1FAE5 !important; 
+          border-color: #10B981 !important; 
+          color: #065F46 !important;
+        }
+        .status-cancelled { 
+          background-color: #FEE2E2 !important; 
+          border-color: #EF4444 !important; 
+          color: #991B1B !important;
+        }
 
-        .dark .status-pending { background-color: #78350F; border-color: #F59E0B; }
-        .dark .status-confirmed { background-color: #064E3B; border-color: #10B981; }
-        .dark .status-cancelled { background-color: #7F1D1D; border-color: #EF4444; }
+        .dark .status-pending { 
+          background-color: #78350F !important; 
+          border-color: #F59E0B !important; 
+          color: #FEF3C7 !important;
+        }
+        .dark .status-confirmed { 
+          background-color: #064E3B !important; 
+          border-color: #10B981 !important; 
+          color: #D1FAE5 !important;
+        }
+        .dark .status-cancelled { 
+          background-color: #7F1D1D !important; 
+          border-color: #EF4444 !important; 
+          color: #FEE2E2 !important;
+        }
 
-        .fc { height: 100%; }
+        .fc { height: 100% !important; }
         .fc-theme-standard td { border: 1px solid #E5E7EB; }
-        .dark .fc-theme-standard td { border-color: #374151; }
-        .fc-theme-standard th { border: 1px solid #E5E7EB; background: #F3F4F6; }
-        .dark .fc-theme-standard th { border-color: #374151; background: #1F2937; }
+        .dark .fc-theme-standard td { border-color: #374151 !important; }
+        .fc-theme-standard th { 
+          border: 1px solid #E5E7EB; 
+          background: #F9FAFB !important; 
+          color: #374151 !important;
+        }
+        .dark .fc-theme-standard th { 
+          border-color: #374151 !important; 
+          background: #1F2937 !important; 
+          color: #F3F4F6 !important;
+        }
         .fc-theme-standard .fc-scrollgrid { border: 1px solid #E5E7EB; }
-        .dark .fc-theme-standard .fc-scrollgrid { border-color: #374151; }
-        .fc-theme-standard td.fc-today { background: #EFF6FF; }
-        .dark .fc-theme-standard td.fc-today { background: #1E3A8A; }
+        .dark .fc-theme-standard .fc-scrollgrid { border-color: #374151 !important; }
+        .fc-theme-standard td.fc-today { background: #EFF6FF !important; }
+        .dark .fc-theme-standard td.fc-today { background: #1E3A8A !important; }
         .fc-day-today { background: #EFF6FF !important; }
         .dark .fc-day-today { background: #1E3A8A !important; }
-        .fc-button { background: #F3F4F6 !important; border: 1px solid #E5E7EB !important; color: #374151 !important; }
-        .dark .fc-button { background: #374151 !important; border-color: #4B5563 !important; color: #F3F4F6 !important; }
-        .fc-button-active { background: #2563EB !important; color: white !important; }
-        .dark .fc-button-active { background: #1D4ED8 !important; }
+        .fc-button { 
+          background: #F3F4F6 !important; 
+          border: 1px solid #E5E7EB !important; 
+          color: #374151 !important; 
+        }
+        .dark .fc-button { 
+          background: #374151 !important; 
+          border-color: #4B5563 !important; 
+          color: #F3F4F6 !important; 
+        }
+        .fc-button-active { 
+          background: #2563EB !important; 
+          color: white !important; 
+        }
+        .dark .fc-button-active { 
+          background: #1D4ED8 !important; 
+        }
         .fc-timegrid-slot { height: 48px !important; }
+        .fc-toolbar { 
+          flex-direction: column !important; 
+          gap: 0.5rem !important; 
+        }
+        @media (min-width: 768px) {
+          .fc-toolbar { 
+            flex-direction: row !important; 
+          }
+        }
+        .fc-toolbar-chunk { 
+          display: flex !important; 
+          align-items: center !important; 
+          justify-content: center !important; 
+        }
+        @media (min-width: 768px) {
+          .fc-toolbar-chunk:first-child { 
+            justify-content: flex-start !important; 
+          }
+          .fc-toolbar-chunk:last-child { 
+            justify-content: flex-end !important; 
+          }
+        }
+        .fc-event { 
+          font-size: 0.75rem !important; 
+          padding: 2px 4px !important; 
+        }
+        @media (min-width: 768px) {
+          .fc-event { 
+            font-size: 0.875rem !important; 
+          }
+        }
+        .fc-daygrid-event { 
+          margin: 1px !important; 
+        }
+        .fc-event-title { 
+          overflow: hidden !important; 
+          text-overflow: ellipsis !important; 
+          white-space: nowrap !important; 
+        }
       `}</style>
     </div>
   );
