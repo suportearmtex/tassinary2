@@ -145,11 +145,12 @@ function Layout({ children }: LayoutProps) {
 
       {/* Sidebar */}
       <aside
-        className={`fixed left-0 top-[57px] h-[calc(100vh-57px)] bg-white dark:bg-gray-800 shadow-sm transition-all duration-300 z-25 ${
+        className={`fixed left-0 top-[57px] h-[calc(100vh-57px)] bg-white dark:bg-gray-800 shadow-sm transition-all duration-300 z-999 ${
           isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
         } lg:translate-x-0 ${
           isSidebarOpen ? 'w-64' : 'w-64 lg:w-16'
         }`}
+        style={{ zIndex: 999 }}
       >
         <nav className="p-4 space-y-1">
           {navItems.map((item) => {

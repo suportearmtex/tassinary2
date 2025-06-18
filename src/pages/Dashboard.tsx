@@ -857,6 +857,37 @@ function Dashboard() {
           text-overflow: ellipsis !important; 
           white-space: nowrap !important; 
         }
+        
+        /* Correção específica para textos do calendário no modo escuro */
+        .dark .fc-col-header-cell-cushion,
+        .dark .fc-daygrid-day-number,
+        .dark .fc-timegrid-slot-label-cushion,
+        .dark .fc-toolbar-title,
+        .dark .fc-list-day-text,
+        .dark .fc-list-day-side-text {
+          color: #F3F4F6 !important;
+        }
+        
+        .dark .fc-daygrid-day-number {
+          color: #D1D5DB !important;
+        }
+        
+        .dark .fc-col-header-cell {
+          background-color: #1F2937 !important;
+        }
+        
+        .dark .fc-timegrid-axis-cushion {
+          color: #9CA3AF !important;
+        }
+        
+        .dark .fc-scrollgrid {
+          background-color: #111827 !important;
+        }
+        
+        .dark .fc-daygrid-body,
+        .dark .fc-timegrid-body {
+          background-color: #111827 !important;
+        }
       `}</style>
     </div>
   );
