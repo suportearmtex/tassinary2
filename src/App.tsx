@@ -10,6 +10,7 @@ import Clients from './pages/Clients';
 import Services from './pages/Services';
 import WhatsApp from './pages/WhatsApp';
 import Settings from './pages/Settings';
+import AdminPanel from './pages/AdminPanel';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import { useAuthStore } from './store/authStore';
@@ -44,6 +45,7 @@ function App() {
               <Route path="/services" element={<Services />} />
               <Route path="/whatsapp" element={<WhatsApp />} />
               <Route path="/settings" element={<Settings />} />
+              <Route path="/admin" element={<AdminPanel />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </Layout>

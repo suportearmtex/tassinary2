@@ -13,9 +13,12 @@ import {
   X,
   Sun,
   Moon,
+  Shield,
 } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 import { useThemeStore } from '../store/themeStore';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '../lib/supabase';
 
 interface LayoutProps {
   children: ReactNode;
@@ -30,6 +33,22 @@ function Layout({ children }: LayoutProps) {
   const user = useAuthStore((state) => state.user);
   const { isDarkMode, toggleTheme } = useThemeStore();
 
+  // Verificar se o usuário atual é admin
+  const { data: currentUserData } = useQuery({
+    queryKey: ['current-user', user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('users')
+        .select('role')
+        .eq('id', user?.id)
+        .single();
+
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user?.id,
+  });
+
   const navItems = [
     { id: '/', label: 'Dashboard', icon: Calendar },
     { id: '/appointments', label: 'Agendamentos', icon: Calendar },
@@ -37,6 +56,9 @@ function Layout({ children }: LayoutProps) {
     { id: '/services', label: 'Serviços', icon: DollarSign },
     { id: '/whatsapp', label: 'WhatsApp', icon: MessageSquare },
     { id: '/settings', label: 'Configurações', icon: Settings },
+    ...(currentUserData?.role === 'admin' ? [
+      { id: '/admin', label: 'Painel Admin', icon: Shield }
+    ] : []),
   ];
 
   React.useEffect(() => {
@@ -92,6 +114,11 @@ function Layout({ children }: LayoutProps) {
                 className="w-8 h-8 rounded-full object-cover"
               />
               <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{user?.email}</span>
+              {currentUserData?.role === 'admin' && (
+                <span className="px-2 py-1 bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200 text-xs font-medium rounded-full">
+                  Admin
+                </span>
+              )}
               <ChevronDown className="w-4 h-4 text-gray-500 dark:text-gray-400" />
             </div>
             <button 
