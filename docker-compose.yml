@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  tassinary-app:
+    image: jvg21/tassinary-app:latest  # Imagem do Docker Hub
+    container_name: tassinary-app
+    restart: always
+    environment:
+      - PORT=3000
+      - NODE_ENV=production
+      - VITE_SUPABASE_URL=${VITE_SUPABASE_URL}
+      - VITE_SUPABASE_ANON_KEY=${VITE_SUPABASE_ANON_KEY}
+      - VITE_GOOGLE_CLIENT_ID=${VITE_GOOGLE_CLIENT_ID}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.tassinary-app.rule=Host(`tassinary.armtexai.org`)"
+      - "traefik.http.routers.tassinary-app.entrypoints=websecure"
+      - "traefik.http.routers.tassinary-app.tls=true"
+      - "traefik.http.routers.tassinary-app.tls.certresolver=letsencryptresolver"
+      - "traefik.http.services.tassinary-app.loadbalancer.server.port=3000"
+      
+      # Redirect HTTP to HTTPS
+      - "traefik.http.routers.tassinary-app-http.rule=Host(`tassinary.armtexai.org`)"
+      - "traefik.http.routers.tassinary-app-http.entrypoints=web"
+      - "traefik.http.routers.tassinary-app-http.middlewares=redirect-to-https"
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+    networks:
+      - traefik_proxy
+      - armtexai
+
+networks:
+  traefik_proxy:
+    external: true
+    name: traefik_proxy
+  armtexai:
+    external: true
+    name: armtexai
