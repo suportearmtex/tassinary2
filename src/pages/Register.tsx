@@ -14,56 +14,6 @@ function Register() {
   const navigate = useNavigate();
   const signIn = useAuthStore((state) => state.signIn);
 
-  const validateUser = async (email: string) => {
-    try {
-      console.log('🔍 Iniciando validação do usuário:', email);
-      
-      const apiUrl = `https://registration.themembers.dev.br/api/users/show-email/${encodeURIComponent(email)}/ac9a9355-2b9e-4ef4-a03d-5e98a2ab6b78/aaaf982d-7b29-4923-a7c1-54ee695fb14e`;
-      console.log('📡 URL da API:', apiUrl);
-      
-      const response = await fetch(apiUrl, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      
-      console.log('📊 Status da resposta:', response.status);
-      console.log('📊 Status text:', response.statusText);
-      console.log('📊 Headers da resposta:', Object.fromEntries(response.headers.entries()));
-      
-      if (!response.ok) {
-        // Tentar ler o corpo da resposta para mais detalhes
-        let errorBody = '';
-        try {
-          errorBody = await response.text();
-          console.error('❌ Corpo da resposta de erro:', errorBody);
-        } catch (bodyError) {
-          console.error('❌ Erro ao ler corpo da resposta:', bodyError);
-        }
-        
-        throw new Error(`Usuário não encontrado ou não autorizado (Status: ${response.status} - ${response.statusText})`);
-      }
-      
-      const userData = await response.json();
-      console.log('✅ Dados do usuário recebidos:', userData);
-      
-      return userData;
-    } catch (error) {
-      console.error('❌ Erro completo na validação:', error);
-      console.error('❌ Tipo do erro:', typeof error);
-      console.error('❌ Stack trace:', error instanceof Error ? error.stack : 'N/A');
-      
-      // Verificar se é um erro de rede/CORS
-      if (error instanceof TypeError && error.message.includes('fetch')) {
-        console.error('🌐 Possível erro de rede ou CORS detectado');
-        throw new Error('Erro de conectividade. Verifique sua conexão com a internet ou tente novamente mais tarde.');
-      }
-      
-      throw new Error('Erro ao validar usuário. Verifique se o email está correto.');
-    }
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -82,19 +32,7 @@ function Register() {
     try {
       console.log('🚀 Iniciando processo de registro para:', email);
       
-      // First validate the user through the external API
-      const userData = await validateUser(email.trim());
-      
-      // The API returns an object with a user property
-      if (!userData || !userData.user || !userData.user.id) {
-        console.error('❌ Dados do usuário inválidos:', userData);
-        throw new Error('Usuário não encontrado ou dados inválidos');
-      }
-
-      const user = userData.user;
-      console.log('✅ Usuário validado com sucesso:', user);
-
-      // If validation passes, create account in Supabase
+      // Create account in Supabase directly
       console.log('📝 Criando conta no Supabase...');
       const { supabase } = await import('../lib/supabase');
       const { data, error } = await supabase.auth.signUp({
@@ -102,8 +40,7 @@ function Register() {
         password: password.trim(),
         options: {
           data: {
-            full_name: user.name || user.full_name || email.split('@')[0],
-            external_user_id: user.id,
+            full_name: email.split('@')[0],
           }
         }
       });
